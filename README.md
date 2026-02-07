@@ -8,7 +8,7 @@ A progressive web app that captures photos and embeds speech-to-text transcripti
 2. **Speech-to-text** via Web Speech API — tap the mic to dictate a note after taking a photo
 3. **EXIF embedding** via piexifjs — your voice note gets written into the JPEG's metadata fields
 4. **Local storage** via IndexedDB — photos persist in-app between sessions
-5. **Download** — triggers a file download on save (lands in Downloads on Android, Files on iOS)
+5. **Save** — uses Web Share API on iOS (native share sheet → "Save Image" to Camera Roll), falls back to file download on Android/desktop
 
 ## Running Locally
 
@@ -19,16 +19,22 @@ npx serve .
 python3 -m http.server 8000
 ```
 
-Then open on your phone (must be HTTPS for camera access — use ngrok or similar for testing).
+Or with Docker:
+```bash
+docker build -t linuscam .
+docker run -p 8080:80 linuscam
+```
+
+Then open on your phone (must be HTTPS for camera access — use ngrok or similar for testing). `localhost` is treated as a secure context by browsers.
 
 ## PWA Install
 
 On Android Chrome: Menu → "Add to Home Screen"
 On iOS Safari: Share → "Add to Home Screen"
 
-## The iOS Photo Library Problem
+## iOS Photo Library
 
-As a PWA, this app **cannot** write directly to the iOS Camera Roll. Downloaded files go to the Files app. Users must manually "Save to Photos" from there.
+On iOS Safari, saving a photo presents the native share sheet via the Web Share API. Tap "Save Image" to save directly to the Camera Roll. This is the best a PWA can do — browsers don't have direct Camera Roll write access. If the share sheet is dismissed, it falls back to a file download.
 
 ## Upgrading to Native (Capacitor)
 
@@ -122,7 +128,7 @@ print('UserComment:', d['Exif'].get(37510, b'')[8:].decode())
 | Camera | ✅ | ✅ | ✅ |
 | Speech-to-Text | ✅ | ✅ (partial) | ✅ |
 | EXIF Writing | ✅ | ✅ | ✅ |
-| Download to Photos | ✅ (Downloads) | ❌ (Files only) | ✅ (Downloads) |
+| Save to Photos | ✅ (Downloads) | ✅ (via Share Sheet) | ✅ (Downloads) |
 | PWA Install | ✅ | ✅ (limited) | ✅ |
 
-For true "save to Photos" on iOS, use the Capacitor wrapper.
+For fully automatic save (no share sheet tap), use the Capacitor wrapper.
