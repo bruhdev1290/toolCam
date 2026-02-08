@@ -10,22 +10,69 @@ A progressive web app that captures photos and embeds speech-to-text transcripti
 4. **Local storage** via IndexedDB — photos persist in-app between sessions
 5. **Save** — uses Web Share API on iOS (native share sheet → "Save Image" to Camera Roll), falls back to file download on Android/desktop
 
-## Running Locally
+## Development
 
-Any static file server works:
 ```bash
-npx serve .
-# or
-python3 -m http.server 8000
+npm install
+npm run dev
 ```
 
-Or with Docker:
+Vite dev server starts at `http://localhost:5173`. `localhost` is treated as a secure context by browsers, so camera access works without HTTPS.
+
+For testing on a phone, use ngrok or similar to get an HTTPS URL.
+
+## Building
+
+```bash
+npm run build
+```
+
+Output goes to `dist/`. Preview the production build with:
+
+```bash
+npm run preview
+```
+
+## Docker
+
 ```bash
 docker build -t linuscam .
 docker run -p 8080:80 linuscam
 ```
 
-Then open on your phone (must be HTTPS for camera access — use ngrok or similar for testing). `localhost` is treated as a secure context by browsers.
+The Dockerfile runs a multi-stage build (Node for `npm run build`, then Nginx to serve the static output).
+
+## Project Structure
+
+```
+index.html              Markup only — no inline CSS or JS
+vite.config.js          Vite + vite-plugin-pwa config
+src/
+  main.js               Entry point: imports CSS, wires event listeners, runs init
+  css/
+    variables.css       Design tokens (:root custom properties)
+    base.css            Reset and html/body styles
+    camera.css          Camera view, controls, shutter button
+    review.css          Photo review, voice note input
+    gallery.css         Photo gallery grid
+    detail.css          Photo detail view
+    viewer.css          EXIF viewer (drag-drop metadata reader)
+    components.css      Toast, flash overlay, permission screen
+  modules/
+    dom.js              $ helper, escapeHtml
+    state.js            Centralized app state
+    db.js               IndexedDB wrapper
+    camera.js           Camera stream + photo capture
+    speech.js           Speech recognition
+    exif.js             EXIF read/write via piexifjs
+    photos.js           Save, share, download
+    views.js            View show/hide helpers
+    gallery.js          Gallery + detail view
+    viewer.js           EXIF viewer tab
+    toast.js            Toast notifications
+public/
+  icon.svg              App icon
+```
 
 ## PWA Install
 
@@ -41,9 +88,7 @@ On iOS Safari, saving a photo presents the native share sheet via the Web Share 
 To get true photo library access on both platforms, wrap this with Capacitor:
 
 ```bash
-npm init -y
-npm install @capacitor/core @capacitor/cli
-npx cap init LinusCam com.linuscam.app --web-dir .
+npx cap init LinusCam com.linuscam.app --web-dir dist
 
 # Add platforms
 npm install @capacitor/ios @capacitor/android

@@ -1,0 +1,117 @@
+#viewerView {
+  position: fixed; inset: 0;
+  background: #000;
+  display: none; flex-direction: column;
+  z-index: 100;
+}
+
+#viewerView.active { display: flex; }
+
+.viewer-top {
+  padding: calc(var(--safe-top) + 12px) 16px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--ui-bg-solid);
+  flex-shrink: 0;
+}
+
+.viewer-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.viewer-empty {
+  display: flex;
+  align-items: center; justify-content: center;
+  min-height: 100%;
+  padding: 40px 24px;
+}
+
+.viewer-drop-zone {
+  display: flex; flex-direction: column;
+  align-items: center; text-align: center;
+  padding: 40px 24px;
+  border: 2px dashed rgba(255,255,255,0.15);
+  border-radius: 20px;
+  width: 100%; max-width: 340px;
+}
+
+.viewer-drop-zone.dragover {
+  border-color: var(--accent);
+  background: rgba(10,132,255,0.08);
+}
+
+.viewer-pick-btn {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: white;
+  font-size: 16px; font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  text-align: center;
+}
+
+.viewer-pick-btn:active { transform: scale(0.96); }
+
+.viewer-pick-btn.small {
+  padding: 10px 20px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.viewer-result {
+  display: flex; flex-direction: column;
+}
+
+.viewer-image-wrap {
+  width: 100%;
+  max-height: 45vh;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: #111;
+}
+
+#viewerImage {
+  width: 100%;
+  max-height: 45vh;
+  object-fit: contain;
+}
+
+.viewer-meta {
+  padding: 20px 16px calc(var(--safe-bottom) + 20px);
+  display: flex; flex-direction: column;
+  gap: 16px;
+}
+
+.viewer-meta-section {
+  display: flex; flex-direction: column; gap: 4px;
+}
+
+.viewer-meta-label {
+  font-size: 11px; font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.viewer-meta-value {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.viewer-meta-value.empty {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 14px;
+}
+
+.viewer-meta-value.highlight {
+  background: rgba(10,132,255,0.12);
+  border-left: 3px solid var(--accent);
+  padding: 10px 14px;
+  border-radius: 0 8px 8px 0;
+  font-size: 16px;
+}

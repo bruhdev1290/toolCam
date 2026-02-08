@@ -1,0 +1,168 @@
+#cameraView {
+  position: fixed; inset: 0;
+  display: none; flex-direction: column;
+  background: #000;
+}
+
+#cameraView.active { display: flex; }
+
+#videoContainer {
+  flex: 1; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+
+#video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+#canvas { display: none; }
+
+/* Top bar */
+.top-bar {
+  position: absolute; top: 0; left: 0; right: 0;
+  padding: calc(var(--safe-top) + 12px) 16px 12px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 100%);
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 10;
+}
+
+.top-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--ui-bg);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: none; color: white;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 18px;
+}
+
+.top-btn:active { transform: scale(0.9); }
+
+.flash-indicator {
+  font-size: 13px; font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+/* Bottom controls */
+.bottom-controls {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 20px 24px calc(var(--safe-bottom) + 20px);
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+  z-index: 10;
+}
+
+/* Recording indicator */
+.recording-strip {
+  display: none;
+  align-items: center; gap: 8px;
+  padding: 6px 14px;
+  background: rgba(255,69,58,0.25);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  font-size: 13px; font-weight: 500;
+  color: var(--danger);
+}
+
+.recording-strip.active { display: flex; }
+
+.rec-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--danger);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.shutter-row {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; gap: 40px;
+}
+
+.side-btn {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--ui-bg);
+  backdrop-filter: blur(12px);
+  border: none; color: white;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 20px;
+}
+
+.side-btn:active { transform: scale(0.9); }
+
+/* Thumbnail preview */
+.thumb-btn {
+  width: 48px; height: 48px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.4);
+  overflow: hidden;
+  background: var(--ui-bg);
+  cursor: pointer;
+}
+
+.thumb-btn img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.thumb-btn.empty {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+
+/* Shutter button */
+.shutter-btn {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  border: 4px solid rgba(255,255,255,0.9);
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.1s;
+}
+
+.shutter-btn::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  transition: all 0.15s;
+}
+
+.shutter-btn:active { transform: scale(0.93); }
+.shutter-btn:active::after { background: rgba(255,255,255,0.7); }
+
+.shutter-btn.recording { border-color: var(--danger); }
+.shutter-btn.recording::after {
+  background: var(--danger);
+  inset: 18px;
+  border-radius: 6px;
+}
+
+/* Mode labels */
+.mode-strip {
+  display: flex; gap: 20px;
+  font-size: 13px; font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.mode-strip span {
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px 0;
+  position: relative;
+}
+
+.mode-strip span.active {
+  color: #ffd60a;
+}
+
+.mode-strip span.viewer-mode {
+  color: var(--accent);
+}

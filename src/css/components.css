@@ -1,0 +1,78 @@
+/* Flash overlay */
+.flash-overlay {
+  position: fixed; inset: 0;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 200;
+  transition: opacity 0.05s;
+}
+
+.flash-overlay.flash {
+  opacity: 0.8;
+  transition: opacity 0.0s;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: calc(var(--safe-top) + 60px);
+  left: 50%; transform: translateX(-50%) translateY(-20px);
+  padding: 10px 20px;
+  border-radius: 20px;
+  background: var(--ui-bg-solid);
+  backdrop-filter: blur(20px);
+  font-size: 14px; font-weight: 500;
+  color: var(--text-primary);
+  z-index: 300;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Permission screen */
+#permissionScreen {
+  position: fixed; inset: 0;
+  background: #000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px; padding: 40px;
+  z-index: 500;
+  text-align: center;
+}
+
+#permissionScreen.hidden { display: none; }
+
+.perm-icon { font-size: 64px; margin-bottom: 8px; }
+
+.perm-title {
+  font-size: 22px; font-weight: 700;
+  line-height: 1.3;
+}
+
+.perm-desc {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 300px;
+}
+
+.perm-btn {
+  padding: 14px 32px;
+  border-radius: 14px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  font-size: 17px; font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  margin-top: 8px;
+}
+
+.perm-btn:active { transform: scale(0.96); }
