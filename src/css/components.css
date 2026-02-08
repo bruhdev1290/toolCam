@@ -49,7 +49,7 @@
 
 #permissionScreen.hidden { display: none; }
 
-.perm-icon { font-size: 64px; margin-bottom: 8px; }
+.perm-logo { width: 120px; height: auto; margin-bottom: 8px; }
 
 .perm-title {
   font-size: 22px; font-weight: 700;

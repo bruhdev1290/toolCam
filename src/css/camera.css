@@ -43,6 +43,11 @@
   font-size: 13px; font-weight: 600;
   color: var(--text-secondary);
   letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 6px;
+}
+
+.top-bar-logo {
+  height: 18px; width: auto;
 }
 
 /* Bottom controls */

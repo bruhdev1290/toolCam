@@ -15,6 +15,15 @@
 
 .gallery-title {
   font-size: 17px; font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+}
+
+.header-logo {
+  height: 20px; width: auto;
+}
+
+.gallery-empty-logo {
+  width: 64px; height: auto; opacity: 0.5;
 }
 
 .gallery-grid {

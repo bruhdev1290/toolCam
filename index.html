@@ -7,12 +7,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
 <title>LinusCam</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
 
 <!-- Permission Screen -->
 <div id="permissionScreen">
-  <div class="perm-icon">📸</div>
+  <img class="perm-logo" src="/linuscamlogo.png" alt="LinusCam">
   <div class="perm-title">LinusCam</div>
   <div class="perm-desc">Capture photos with voice notes embedded right in the image metadata. Grant camera access to get started.</div>
   <button class="perm-btn" id="grantPermBtn">Enable Camera</button>
@@ -26,7 +28,7 @@
 
     <div class="top-bar">
       <button class="top-btn" id="flipBtn">⟳</button>
-      <span class="flash-indicator">LINUSCAM</span>
+      <span class="flash-indicator"><img class="top-bar-logo" src="/linuscamlogo.png" alt="">LINUSCAM</span>
       <button class="top-btn" id="galleryBtn">⊞</button>
     </div>
 
@@ -79,12 +81,12 @@
 <div id="galleryView">
   <div class="gallery-top">
     <button class="review-btn cancel" id="galleryBack">← Back</button>
-    <span class="gallery-title">LinusCam</span>
+    <span class="gallery-title"><img class="header-logo" src="/linuscamlogo.png" alt="">LinusCam</span>
     <span style="width:60px"></span>
   </div>
   <div class="gallery-grid" id="galleryGrid"></div>
   <div class="gallery-empty" id="galleryEmpty" style="display:none">
-    <div class="gallery-empty-icon">📷</div>
+    <img class="gallery-empty-logo" src="/linuscamlogo.png" alt="">
     <div class="gallery-empty-text">No photos yet</div>
   </div>
 </div>
@@ -113,13 +115,13 @@
 <div id="viewerView">
   <div class="viewer-top">
     <button class="review-btn cancel" id="viewerBack">← Back</button>
-    <span class="gallery-title">EXIF Viewer</span>
+    <span class="gallery-title"><img class="header-logo" src="/linuscamlogo.png" alt="">EXIF Viewer</span>
     <span style="width:60px"></span>
   </div>
   <div class="viewer-content" id="viewerContent">
     <div class="viewer-empty" id="viewerEmpty">
       <div class="viewer-drop-zone" id="dropZone">
-        <div style="font-size:48px;margin-bottom:12px">🔍</div>
+        <img src="/linuscamlogo.png" alt="" style="width:64px;height:auto;margin-bottom:12px;opacity:0.7">
         <div style="font-size:17px;font-weight:600;margin-bottom:6px">View Photo Metadata</div>
         <div style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;line-height:1.5;max-width:260px">
           Pick any JPEG to read the voice note embedded in its EXIF data
