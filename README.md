@@ -4,8 +4,8 @@ A progressive web app that captures photos and embeds speech-to-text transcripti
 
 ## How It Works
 
-1. **Camera capture** via `getUserMedia` — works on both Android and iOS browsers
-2. **Speech-to-text** via Web Speech API — tap the mic to dictate a note after taking a photo
+1. **Camera capture** via `getUserMedia` — front/back camera switching with mirror effect for selfies, works on Android, iOS, and desktop browsers
+2. **Speech-to-text** via Web Speech API — tap the mic after taking a photo, or toggle auto-record to start listening immediately after each shutter press
 3. **EXIF embedding** via piexifjs — your voice note gets written into the JPEG's metadata fields
 4. **Local storage** via IndexedDB — photos persist in-app between sessions
 5. **Save** — uses Web Share API on iOS (native share sheet → "Save Image" to Camera Roll), falls back to file download on Android/desktop
@@ -47,6 +47,9 @@ The Dockerfile runs a multi-stage build (Node for `npm run build`, then Nginx to
 ```
 index.html              Markup only — no inline CSS or JS
 vite.config.js          Vite + vite-plugin-pwa config
+capacitor.config.json   Capacitor app configuration
+ios/                    Capacitor iOS project (Xcode)
+android/                Capacitor Android project (Gradle)
 src/
   main.js               Entry point: imports CSS, wires event listeners, runs init
   css/
@@ -72,7 +75,12 @@ src/
     viewer.js           EXIF viewer tab
     toast.js            Toast notifications
 public/
-  icon.svg              App icon
+  apple-touch-icon.png  iOS home screen icon
+  favicon.png           Browser tab icon
+  icon-192.png          PWA icon (192x192)
+  icon-512.png          PWA icon (512x512)
+  icon.svg              SVG app icon
+  linuscamlogo.png      LinusCam logo (used in UI)
 ```
 
 ## PWA Install
@@ -137,3 +145,7 @@ print('UserComment:', d['Exif'].get(37510, b'')[8:].decode())
 | Speech-to-Text | ✅ (native engine) | ✅ | ✅ (partial) | ✅ |
 | EXIF Writing | ✅ | ✅ | ✅ | ✅ |
 | Save to Photos | ✅ (direct) | ✅ (Downloads) | ✅ (via Share Sheet) | ✅ (Downloads) |
+
+## License
+
+Public domain. Do what you want. See [weebcoders.com/license](https://weebcoders.com/license).
