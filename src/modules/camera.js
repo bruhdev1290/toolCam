@@ -4,12 +4,27 @@ import { showToast } from './toast.js';
 import { startListening, updateVoiceStatus } from './speech.js';
 
 export async function startCamera() {
-  if (state.stream) state.stream.getTracks().forEach((t) => t.stop());
+  // Fully tear down any existing stream
+  if (state.stream) {
+    state.stream.getTracks().forEach((t) => t.stop());
+    $('video').srcObject = null;
+    state.stream = null;
+  }
+
   try {
+    // Single getUserMedia call — facingMode as preference only, no exact, no retries.
+    // On iOS Safari, multiple rapid getUserMedia calls crash the WebKit process.
     state.stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: state.facingMode, width: { ideal: 4032 }, height: { ideal: 3024 } },
+      video: { facingMode: state.facingMode },
       audio: false,
     });
+
+    // Update facingMode based on what we actually got (for mirror logic in capturePhoto)
+    const actualFacing = state.stream.getVideoTracks()[0]?.getSettings()?.facingMode;
+    if (actualFacing) {
+      state.facingMode = actualFacing;
+    }
+
     $('video').srcObject = state.stream;
     $('permissionScreen').classList.add('hidden');
     $('cameraView').classList.add('active');
