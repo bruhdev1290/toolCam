@@ -1,2 +1,13 @@
 node_modules
 dist
+
+# iOS
+ios/App/Pods/
+ios/App/App/public/
+ios/App/App/capacitor.config.json
+
+# Android
+android/.gradle/
+android/app/build/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json

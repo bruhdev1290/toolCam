@@ -1,6 +1,10 @@
 import state from './state.js';
 import { $ } from './dom.js';
 import { showToast } from './toast.js';
+import { isNative } from './platform.js';
+import { SpeechRecognition as CapSpeechRecognition } from '@capgo/capacitor-speech-recognition';
+
+let nativeListener = null;
 
 export function initSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -49,7 +53,12 @@ export function initSpeechRecognition() {
   return r;
 }
 
-export function startListening() {
+export async function startListening() {
+  if (isNative()) {
+    await startNativeListening();
+    return;
+  }
+
   if (!state.recognition) state.recognition = initSpeechRecognition();
   if (!state.recognition) {
     showToast('Speech recognition not supported');
@@ -74,6 +83,59 @@ export function startListening() {
     state.recognition.stop();
     setTimeout(() => state.recognition.start(), 100);
   }
+}
+
+export async function stopListening() {
+  if (!state.isListening) return;
+  if (isNative()) {
+    await stopNativeListening();
+  } else if (state.recognition) {
+    state.recognition.stop();
+  }
+}
+
+async function startNativeListening() {
+  if (state.isListening) {
+    await stopNativeListening();
+    return;
+  }
+
+  const permResult = await CapSpeechRecognition.requestPermissions();
+  if (permResult.speechRecognition !== 'granted') {
+    showToast('Speech recognition permission denied');
+    return;
+  }
+
+  state.isListening = true;
+  $('reviewMicBtn').classList.add('listening');
+  $('reviewMicBtn').innerHTML = '⏹ Stop';
+  $('recStrip').classList.add('active');
+  updateVoiceStatus('listening');
+
+  nativeListener = await CapSpeechRecognition.addListener('partialResults', (data) => {
+    if (data.matches && data.matches.length > 0) {
+      $('noteText').value = data.matches[0];
+    }
+  });
+
+  await CapSpeechRecognition.start({
+    language: 'en-US',
+    partialResults: true,
+    popup: false,
+  });
+}
+
+async function stopNativeListening() {
+  await CapSpeechRecognition.stop();
+  if (nativeListener) {
+    nativeListener.remove();
+    nativeListener = null;
+  }
+  state.isListening = false;
+  $('reviewMicBtn').classList.remove('listening');
+  $('reviewMicBtn').innerHTML = '🎤 Record Note';
+  $('recStrip').classList.remove('active');
+  updateVoiceStatus($('noteText').value ? 'done' : '');
 }
 
 export function updateVoiceStatus(statusState) {

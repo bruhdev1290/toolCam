@@ -3,6 +3,9 @@ import { $ } from './dom.js';
 import { showToast } from './toast.js';
 import { embedNoteInExif } from './exif.js';
 import { dbPut, refreshPhotos } from './db.js';
+import { stopListening } from './speech.js';
+import { isNative } from './platform.js';
+import { Media } from '@capacitor-community/media';
 
 export async function savePhoto() {
   const note = $('noteText').value.trim();
@@ -27,7 +30,7 @@ export async function savePhoto() {
 
   // Close review
   $('reviewView').classList.remove('active');
-  if (state.isListening && state.recognition) state.recognition.stop();
+  if (state.isListening) stopListening();
 
   showToast(note ? 'Saved with voice note \u2713' : 'Photo saved \u2713');
 
@@ -58,6 +61,16 @@ export function triggerDownload(dataUrl, timestamp) {
 }
 
 export async function shareOrDownload(dataUrl, timestamp) {
+  if (isNative()) {
+    try {
+      await Media.savePhoto({ path: dataUrl });
+    } catch (err) {
+      console.error('Native photo save failed:', err);
+      showToast('Could not save to photo library');
+    }
+    return;
+  }
+
   const fname = generateFilename(timestamp);
   if (navigator.share && navigator.canShare) {
     const file = dataUrlToFile(dataUrl, fname);

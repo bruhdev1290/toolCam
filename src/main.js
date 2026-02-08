@@ -13,7 +13,7 @@ import { $ } from './modules/dom.js';
 import state from './modules/state.js';
 import { initDB, dbGetAll } from './modules/db.js';
 import { startCamera, capturePhoto } from './modules/camera.js';
-import { startListening, updateVoiceStatus } from './modules/speech.js';
+import { startListening, stopListening, updateVoiceStatus } from './modules/speech.js';
 import { savePhoto, updateThumbnail } from './modules/photos.js';
 import { showToast } from './modules/toast.js';
 import { hideView } from './modules/views.js';
@@ -40,7 +40,7 @@ $('micToggle').addEventListener('click', () => {
 
 $('reviewCancel').addEventListener('click', () => {
   hideView('reviewView');
-  if (state.isListening && state.recognition) state.recognition.stop();
+  if (state.isListening) stopListening();
 });
 
 $('reviewSave').addEventListener('click', savePhoto);
@@ -49,7 +49,7 @@ $('reviewMicBtn').addEventListener('click', startListening);
 
 $('clearNoteBtn').addEventListener('click', () => {
   $('noteText').value = '';
-  if (state.isListening && state.recognition) state.recognition.stop();
+  if (state.isListening) stopListening();
   updateVoiceStatus('');
 });
 

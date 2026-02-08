@@ -63,9 +63,10 @@ src/
     state.js            Centralized app state
     db.js               IndexedDB wrapper
     camera.js           Camera stream + photo capture
-    speech.js           Speech recognition
+    platform.js         Capacitor/web platform detection
+    speech.js           Speech recognition (native + web)
     exif.js             EXIF read/write via piexifjs
-    photos.js           Save, share, download
+    photos.js           Save, share, download (native + web)
     views.js            View show/hide helpers
     gallery.js          Gallery + detail view
     viewer.js           EXIF viewer tab
@@ -79,65 +80,27 @@ public/
 On Android Chrome: Menu → "Add to Home Screen"
 On iOS Safari: Share → "Add to Home Screen"
 
-## iOS Photo Library
+## Native App (Capacitor)
 
-On iOS Safari, saving a photo presents the native share sheet via the Web Share API. Tap "Save Image" to save directly to the Camera Roll. This is the best a PWA can do — browsers don't have direct Camera Roll write access. If the share sheet is dismissed, it falls back to a file download.
+The app is wrapped with Capacitor for native iOS and Android builds. When running as a native app:
 
-## Upgrading to Native (Capacitor)
+- **Photo saving** writes directly to the device camera roll via `@capacitor-community/media` (no share sheet needed)
+- **Speech recognition** uses native speech engines via `@capgo/capacitor-speech-recognition` (more reliable than Web Speech API, especially on iOS)
 
-To get true photo library access on both platforms, wrap this with Capacitor:
+When running as a PWA in a browser, the app falls back to Web Share API / file downloads and browser speech recognition.
 
-```bash
-npx cap init LinusCam com.linuscam.app --web-dir dist
-
-# Add platforms
-npm install @capacitor/ios @capacitor/android
-npx cap add ios
-npx cap add android
-
-# Install native plugins
-npm install @capacitor/camera          # Native camera (optional, can keep getUserMedia)
-npm install @capacitor/filesystem      # File system access
-npm install @capacitor-community/media # Save to photo library ← this is the key one
-
-npx cap sync
-npx cap open ios    # Opens in Xcode
-npx cap open android # Opens in Android Studio
-```
-
-### Key Plugin: @capacitor-community/media
-
-This plugin provides `Media.savePhoto()` which writes directly to the device's photo library on both iOS and Android. Replace the `triggerDownload()` function with:
-
-```javascript
-import { Media } from '@capacitor-community/media';
-import { Filesystem, Directory } from '@capacitor/filesystem';
-
-async function saveToPhotoLibrary(dataUrl, filename) {
-  // Write to temp file first
-  const result = await Filesystem.writeFile({
-    path: filename,
-    data: dataUrl.split(',')[1], // base64 part only
-    directory: Directory.Cache
-  });
-
-  // Save to photo library
-  await Media.savePhoto({
-    path: result.uri,
-    albumIdentifier: 'LinusCam' // Optional: creates/uses album
-  });
-}
-```
-
-### Native Speech Recognition (Optional Upgrade)
-
-For better transcription than Web Speech API:
+### Building for Native
 
 ```bash
-npm install @capacitor-community/speech-recognition
+npm run build         # Build web assets
+npm run cap:sync      # Sync to native projects
+npm run cap:ios       # Open in Xcode
+npm run cap:android   # Open in Android Studio
 ```
 
-This gives you native speech engines on both platforms, which tend to be more reliable than the browser implementation.
+### Platform Detection
+
+The `platform.js` module provides `isNative()` — modules branch on this to use native plugins vs browser APIs. Camera capture stays on `getUserMedia` in both modes (works fine in Capacitor's WebView).
 
 ## EXIF Fields Used
 
@@ -166,14 +129,11 @@ print('UserComment:', d['Exif'].get(37510, b'')[8:].decode())
 "
 ```
 
-## Browser Compatibility
+## Compatibility
 
-| Feature | Android Chrome | iOS Safari | Desktop Chrome |
-|---------|---------------|------------|----------------|
-| Camera | ✅ | ✅ | ✅ |
-| Speech-to-Text | ✅ | ✅ (partial) | ✅ |
-| EXIF Writing | ✅ | ✅ | ✅ |
-| Save to Photos | ✅ (Downloads) | ✅ (via Share Sheet) | ✅ (Downloads) |
-| PWA Install | ✅ | ✅ (limited) | ✅ |
-
-For fully automatic save (no share sheet tap), use the Capacitor wrapper.
+| Feature | Native (Capacitor) | Android Chrome | iOS Safari | Desktop Chrome |
+|---------|-------------------|---------------|------------|----------------|
+| Camera | ✅ | ✅ | ✅ | ✅ |
+| Speech-to-Text | ✅ (native engine) | ✅ | ✅ (partial) | ✅ |
+| EXIF Writing | ✅ | ✅ | ✅ | ✅ |
+| Save to Photos | ✅ (direct) | ✅ (Downloads) | ✅ (via Share Sheet) | ✅ (Downloads) |

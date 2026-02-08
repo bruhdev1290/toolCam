@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">LinusCam</string>
+    <string name="title_activity_main">LinusCam</string>
+    <string name="package_name">com.linuscam.app</string>
+    <string name="custom_url_scheme">com.linuscam.app</string>
+</resources>
