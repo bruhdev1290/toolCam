@@ -1,0 +1,64 @@
+{
+  "expo": {
+    "name": "LinusCam",
+    "slug": "linuscam",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.linuscam.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "LinusCam needs camera access to capture photos with voice notes.",
+        "NSMicrophoneUsageDescription": "LinusCam needs microphone access to record voice notes.",
+        "NSPhotoLibraryUsageDescription": "LinusCam needs photo library access to save your photos.",
+        "NSPhotoLibraryAddUsageDescription": "LinusCam needs permission to save photos to your library.",
+        "NSSpeechRecognitionUsageDescription": "LinusCam uses speech recognition to transcribe your voice notes."
+      }
+    },
+    "android": {
+      "package": "com.linuscam.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_MEDIA_IMAGES"
+      ],
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow LinusCam to access your camera to capture photos.",
+          "microphonePermission": "Allow LinusCam to access your microphone to record voice notes.",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow LinusCam to save photos to your library.",
+          "savePhotosPermission": "Allow LinusCam to save photos to your library.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ]
+    ]
+  }
+}
