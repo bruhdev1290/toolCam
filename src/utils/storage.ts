@@ -1,16 +1,14 @@
-import * as FileSystem from 'expo-file-system';
+import { Paths, File } from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import { Photo } from '../types';
 
-const STORAGE_KEY = '@linuscam_photos';
+const STORAGE_FILE = 'linuscam_photos.json';
 
 export const loadPhotos = async (): Promise<Photo[]> => {
   try {
-    const stored = await FileSystem.readAsStringAsync(
-      FileSystem.documentDirectory + STORAGE_KEY,
-      { encoding: FileSystem.EncodingType.UTF8 }
-    );
-    return JSON.parse(stored);
+    const file = new File(Paths.document, STORAGE_FILE);
+    const content = await file.text();
+    return JSON.parse(content);
   } catch (error) {
     return [];
   }
@@ -18,11 +16,8 @@ export const loadPhotos = async (): Promise<Photo[]> => {
 
 export const savePhotos = async (photos: Photo[]): Promise<void> => {
   try {
-    await FileSystem.writeAsStringAsync(
-      FileSystem.documentDirectory + STORAGE_KEY,
-      JSON.stringify(photos),
-      { encoding: FileSystem.EncodingType.UTF8 }
-    );
+    const file = new File(Paths.document, STORAGE_FILE);
+    await file.write(JSON.stringify(photos));
   } catch (error) {
     console.error('Failed to save photos:', error);
   }
@@ -44,7 +39,8 @@ export const savePhotoToLibrary = async (uri: string): Promise<void> => {
 
 export const deletePhoto = async (uri: string): Promise<void> => {
   try {
-    await FileSystem.deleteAsync(uri, { idempotent: true });
+    const file = new File(uri);
+    await file.delete();
   } catch (error) {
     console.error('Failed to delete photo:', error);
   }

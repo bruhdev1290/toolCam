@@ -12,7 +12,7 @@ import {
 import { useApp } from '../contexts/AppContext';
 import { savePhotoToLibrary, savePhotos, loadPhotos } from '../utils/storage';
 import { Photo } from '../types';
-import * as FileSystem from 'expo-file-system';
+import { Paths, File } from 'expo-file-system';
 
 interface ReviewScreenProps {
   route: any;
@@ -46,21 +46,19 @@ export default function ReviewScreen({ route, navigation }: ReviewScreenProps) {
     try {
       const timestamp = Date.now();
       const fileName = `linuscam_${timestamp}.jpg`;
-      const newUri = FileSystem.documentDirectory + fileName;
+      const destFile = new File(Paths.document, fileName);
 
       // Copy the photo to permanent storage
-      await FileSystem.copyAsync({
-        from: photoUri,
-        to: newUri,
-      });
+      const sourceFile = new File(photoUri);
+      await sourceFile.copy(destFile);
 
       // Save to photo library
-      await savePhotoToLibrary(newUri);
+      await savePhotoToLibrary(destFile.uri);
 
       // Create photo object
       const photo: Photo = {
         id: timestamp.toString(),
-        uri: newUri,
+        uri: destFile.uri,
         note,
         timestamp,
       };
