@@ -1,4 +1,4 @@
-# LinusCam — React Native Camera App with Voice Notes
+# ToolCam — React Native Camera App with Voice Notes
 
 A React Native mobile app built with Expo that captures photos and allows you to add voice notes. Works on iOS and Android using Expo Go for development.
 
