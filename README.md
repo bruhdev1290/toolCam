@@ -1,151 +1,215 @@
-# LinusCam — Camera PWA with Voice Notes in EXIF
+# LinusCam — React Native Camera App with Voice Notes
 
-A progressive web app that captures photos and embeds speech-to-text transcriptions directly into the image's EXIF metadata (ImageDescription + UserComment fields). Includes a standalone EXIF viewer to read notes back from any JPEG.
+A React Native mobile app built with Expo that captures photos and allows you to add voice notes. Works on iOS and Android using Expo Go for development.
 
-## How It Works
+## Features
 
-1. **Camera capture** via `getUserMedia` — front/back camera switching with mirror effect for selfies, works on Android, iOS, and desktop browsers
-2. **Speech-to-text** via Web Speech API — tap the mic after taking a photo, or toggle auto-record to start listening immediately after each shutter press
-3. **EXIF embedding** via piexifjs — your voice note gets written into the JPEG's metadata fields
-4. **Local storage** via IndexedDB — photos persist in-app between sessions
-5. **Save** — uses Web Share API on iOS (native share sheet → "Save Image" to Camera Roll), falls back to file download on Android/desktop
+- **Camera capture** with front/back camera switching
+- **Voice notes** - Add text notes to your photos (speech-to-text can be added with additional services)
+- **Photo gallery** - View all your captured photos
+- **Photo library saving** - Save photos directly to your device's camera roll
+- **EXIF viewer** - View metadata from any JPEG image
+- **Cross-platform** - Works on both iOS and Android
+
+## Quick Start with Expo Go
+
+### Prerequisites
+
+- Node.js (v16 or newer)
+- npm or yarn
+- Expo Go app installed on your phone ([iOS](https://apps.apple.com/app/expo-go/id982107779) | [Android](https://play.google.com/store/apps/details?id=host.exp.exponent))
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/bruhdev1290/toolCam.git
+cd toolCam
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+npm start
+```
+
+4. Scan the QR code with:
+   - **iOS**: Use the Camera app to scan the QR code
+   - **Android**: Use the Expo Go app to scan the QR code
 
 ## Development
 
-```bash
-npm install
-npm run dev
-```
-
-Vite dev server starts at `http://localhost:5173`. `localhost` is treated as a secure context by browsers, so camera access works without HTTPS.
-
-For testing on a phone, use ngrok or similar to get an HTTPS URL.
-
-## Building
+### Running on Specific Platforms
 
 ```bash
-npm run build
+# Start dev server
+npm start
+
+# Or target specific platforms directly
+npm run android   # Android emulator/device
+npm run ios       # iOS simulator (requires macOS)
 ```
 
-Output goes to `dist/`. Preview the production build with:
+### Testing on Your Phone
 
-```bash
-npm run preview
-```
+The easiest way to test is using Expo Go:
 
-## Docker
+1. Install Expo Go on your phone
+2. Run `npm start` in your project
+3. Scan the QR code with your phone
+4. The app will load directly in Expo Go
 
-```bash
-docker build -t linuscam .
-docker run -p 8080:80 linuscam
-```
-
-The Dockerfile runs a multi-stage build (Node for `npm run build`, then Nginx to serve the static output).
-
-## Project Structure
+### Project Structure
 
 ```
-index.html              Markup only — no inline CSS or JS
-vite.config.js          Vite + vite-plugin-pwa config
-capacitor.config.json   Capacitor app configuration
-ios/                    Capacitor iOS project (Xcode)
-android/                Capacitor Android project (Gradle)
+App.tsx                 Main app entry with navigation
+app.json               Expo configuration
+package.json           Dependencies and scripts
 src/
-  main.js               Entry point: imports CSS, wires event listeners, runs init
-  css/
-    variables.css       Design tokens (:root custom properties)
-    base.css            Reset and html/body styles
-    camera.css          Camera view, controls, shutter button
-    review.css          Photo review, voice note input
-    gallery.css         Photo gallery grid
-    detail.css          Photo detail view
-    viewer.css          EXIF viewer (drag-drop metadata reader)
-    components.css      Toast, flash overlay, permission screen
-  modules/
-    dom.js              $ helper, escapeHtml
-    state.js            Centralized app state
-    db.js               IndexedDB wrapper
-    camera.js           Camera stream + photo capture
-    platform.js         Capacitor/web platform detection
-    speech.js           Speech recognition (native + web)
-    exif.js             EXIF read/write via piexifjs
-    photos.js           Save, share, download (native + web)
-    views.js            View show/hide helpers
-    gallery.js          Gallery + detail view
-    viewer.js           EXIF viewer tab
-    toast.js            Toast notifications
-public/
-  apple-touch-icon.png  iOS home screen icon
-  favicon.png           Browser tab icon
-  icon-192.png          PWA icon (192x192)
-  icon-512.png          PWA icon (512x512)
-  icon.svg              SVG app icon
-  linuscamlogo.png      LinusCam logo (used in UI)
+  screens/             Screen components
+    CameraScreen.tsx   Main camera interface
+    ReviewScreen.tsx   Photo review with voice notes
+    GalleryScreen.tsx  Photo gallery grid
+    DetailScreen.tsx   Individual photo view
+    ViewerScreen.tsx   EXIF metadata viewer
+  contexts/
+    AppContext.tsx     Global state management
+  utils/
+    storage.ts         Photo storage and file management
+    speech.ts          Speech recognition utilities
+    exif.ts            EXIF metadata handling
+  types/
+    index.ts           TypeScript type definitions
+assets/                App icons and images
 ```
 
-## PWA Install
+## Building for Production
 
-On Android Chrome: Menu → "Add to Home Screen"
-On iOS Safari: Share → "Add to Home Screen"
+### Using EAS Build (Recommended)
 
-## Native App (Capacitor)
-
-The app is wrapped with Capacitor for native iOS and Android builds. When running as a native app:
-
-- **Photo saving** writes directly to the device camera roll via `@capacitor-community/media` (no share sheet needed)
-- **Speech recognition** uses native speech engines via `@capgo/capacitor-speech-recognition` (more reliable than Web Speech API, especially on iOS)
-
-When running as a PWA in a browser, the app falls back to Web Share API / file downloads and browser speech recognition.
-
-### Building for Native
-
+1. Install EAS CLI:
 ```bash
-npm run build         # Build web assets
-npm run cap:sync      # Sync to native projects
-npm run cap:ios       # Open in Xcode
-npm run cap:android   # Open in Android Studio
+npm install -g eas-cli
 ```
 
-### Platform Detection
-
-The `platform.js` module provides `isNative()` — modules branch on this to use native plugins vs browser APIs. Camera capture stays on `getUserMedia` in both modes (works fine in Capacitor's WebView).
-
-## EXIF Fields Used
-
-| Field | EXIF Tag | Content |
-|-------|----------|---------|
-| ImageDescription | 0x010e | Voice note text |
-| UserComment | 0x9286 | Voice note text (ASCII encoded) |
-| DateTimeOriginal | 0x9003 | Capture timestamp |
-| DateTime | 0x0132 | Capture timestamp |
-| Software | 0x0131 | "LinusCam PWA" |
-
-## Verifying Metadata
-
-After downloading a photo, you can verify the embedded note:
-
+2. Configure EAS:
 ```bash
-# Using exiftool
-exiftool photo.jpg | grep -i "description\|comment\|software"
-
-# Using Python
-python3 -c "
-import piexif
-d = piexif.load('photo.jpg')
-print('Description:', d['0th'].get(270, b'').decode())
-print('UserComment:', d['Exif'].get(37510, b'')[8:].decode())
-"
+eas build:configure
 ```
+
+3. Build for Android:
+```bash
+npx eas build --platform android
+```
+
+4. Build for iOS (requires Apple Developer account):
+```bash
+npx eas build --platform ios
+```
+
+5. Build for both platforms:
+```bash
+eas build --platform all
+```
+
+## Permissions
+
+The app requires the following permissions:
+
+- **Camera** - To capture photos
+- **Microphone** - For voice note recording (when implemented)
+- **Photo Library** - To save photos to your device
+- **Storage** - To store photos locally
+
+These are configured in `app.json` and will be requested at runtime.
+
+## Features in Detail
+
+### Camera
+- Switch between front and back cameras
+- Capture high-quality photos
+- Auto-record mode for voice notes
+
+### Voice Notes
+- Add text notes to photos
+- Manual text input supported
+- Speech-to-text can be integrated with services like:
+  - Google Cloud Speech API
+  - Azure Speech Services
+  - AWS Transcribe
+
+### Gallery
+- View all captured photos in a grid
+- Tap to view details
+- Reverse chronological order
+
+### Photo Detail
+- View full-size photo
+- Read voice note
+- Save to camera roll
+- Delete photo
+
+### EXIF Viewer
+- Pick any JPEG from your library
+- View embedded metadata
+- Read EXIF data from LinusCam photos
+
+## Technologies Used
+
+- **React Native** - Mobile framework
+- **Expo** - Development platform and build tools
+- **TypeScript** - Type safety
+- **expo-camera** - Camera access
+- **expo-media-library** - Photo library integration
+- **expo-image-picker** - Image selection
+- **React Navigation** - Screen navigation
+- **piexifjs** - EXIF metadata (web fallback)
+
+## Notes
+
+- Speech-to-text requires additional implementation. The app currently supports manual text input.
+- EXIF embedding is simplified in this version. Full EXIF writing requires native modules.
+- The app stores photos in app-specific storage and can save to the camera roll.
 
 ## Compatibility
 
-| Feature | Native (Capacitor) | Android Chrome | iOS Safari | Desktop Chrome |
-|---------|-------------------|---------------|------------|----------------|
-| Camera | ✅ | ✅ | ✅ | ✅ |
-| Speech-to-Text | ✅ (native engine) | ✅ | ✅ (partial) | ✅ |
-| EXIF Writing | ✅ | ✅ | ✅ | ✅ |
-| Save to Photos | ✅ (direct) | ✅ (Downloads) | ✅ (via Share Sheet) | ✅ (Downloads) |
+| Feature | iOS | Android | Expo Go |
+|---------|-----|---------|---------|
+| Camera | ✅ | ✅ | ✅ |
+| Photo Capture | ✅ | ✅ | ✅ |
+| Gallery | ✅ | ✅ | ✅ |
+| Save to Library | ✅ | ✅ | ✅ |
+| Text Notes | ✅ | ✅ | ✅ |
+| Speech-to-Text* | ⚠️ | ⚠️ | ⚠️ |
+
+*Speech-to-text requires additional service integration
+
+## Troubleshooting
+
+### "Cannot find module" errors
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Camera not working in Expo Go
+Make sure you've granted camera permissions when prompted. You can reset permissions in your phone's settings.
+
+### Build errors
+Clear the Expo cache:
+```bash
+npx expo start -c
+```
 
 ## License
 
 Public domain. Do what you want. See [weebcoders.com/license](https://weebcoders.com/license).
+
+## Credits
+
+Original PWA version by the LinusCam team. React Native conversion maintains the core functionality while adapting to native mobile platforms.
+
