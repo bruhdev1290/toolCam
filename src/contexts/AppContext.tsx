@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Photo, AppState } from '../types';
+import { loadPhotos } from '../utils/storage';
 
 interface AppContextType extends AppState {
   setPhotos: (photos: Photo[]) => void;
@@ -19,6 +20,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [autoRecordAfterShutter, setAutoRecordAfterShutter] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
+
+  // Load photos from storage on app startup
+  useEffect(() => {
+    const loadInitialPhotos = async () => {
+      try {
+        const storedPhotos = await loadPhotos();
+        setPhotos(storedPhotos);
+      } catch (error) {
+        console.error('Failed to load photos on startup:', error);
+      }
+    };
+    loadInitialPhotos();
+  }, []);
 
   const addPhoto = (photo: Photo) => {
     setPhotos(prev => [...prev, photo]);

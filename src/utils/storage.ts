@@ -20,6 +20,7 @@ export const savePhotos = async (photos: Photo[]): Promise<void> => {
     await file.write(JSON.stringify(photos));
   } catch (error) {
     console.error('Failed to save photos:', error);
+    throw error;
   }
 };
 
@@ -43,5 +44,6 @@ export const deletePhoto = async (uri: string): Promise<void> => {
     await file.delete();
   } catch (error) {
     console.error('Failed to delete photo:', error);
+    throw error;
   }
 };

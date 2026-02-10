@@ -1,7 +1,6 @@
 import * as Speech from 'expo-speech';
 
 export const startSpeechRecognition = (
-  onResult: (text: string) => void,
   onError?: (error: string) => void
 ): void => {
   // Note: Expo Speech does not have speech-to-text built in

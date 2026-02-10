@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useApp } from '../contexts/AppContext';
-import * as FileSystem from 'expo-file-system';
 
 interface CameraScreenProps {
   navigation: any;

@@ -63,10 +63,13 @@ export default function ReviewScreen({ route, navigation }: ReviewScreenProps) {
         timestamp,
       };
 
-      // Add to state and save
-      addPhoto(photo);
-      const updatedPhotos = [...photos, photo];
+      // Load existing photos from storage and append new photo
+      const existingPhotos = await loadPhotos();
+      const updatedPhotos = [...existingPhotos, photo];
       await savePhotos(updatedPhotos);
+
+      // Add to state
+      addPhoto(photo);
 
       Alert.alert('Success', 'Photo saved to library!');
       navigation.navigate('Camera');

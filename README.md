@@ -89,26 +89,6 @@ assets/                App icons and images
 
 ## Building for Production
 
-### Android APK
-
-```bash
-# Build APK
-npx expo build:android
-
-# Or create a production build with EAS
-npx eas build --platform android
-```
-
-### iOS IPA
-
-```bash
-# Build for iOS (requires Apple Developer account)
-npx expo build:ios
-
-# Or create a production build with EAS
-npx eas build --platform ios
-```
-
 ### Using EAS Build (Recommended)
 
 1. Install EAS CLI:
@@ -121,7 +101,17 @@ npm install -g eas-cli
 eas build:configure
 ```
 
-3. Build for both platforms:
+3. Build for Android:
+```bash
+npx eas build --platform android
+```
+
+4. Build for iOS (requires Apple Developer account):
+```bash
+npx eas build --platform ios
+```
+
+5. Build for both platforms:
 ```bash
 eas build --platform all
 ```
